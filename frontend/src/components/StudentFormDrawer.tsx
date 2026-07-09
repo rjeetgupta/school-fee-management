@@ -1,0 +1,166 @@
+import { useEffect } from "react";
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { X } from "lucide-react";
+import { useUIStore } from "@/store/useUIStore";
+import { studentFormSchema, studentFormDefaults } from "@/validations/student.schema";
+import type { StudentFormValues } from "@/validations/student.schema";
+import { useCreateStudent, useUpdateStudent } from "@/hooks/useStudents";
+import { extractErrorMessage } from "@/lib/api";
+
+const FIELDS: Array<{
+  name: keyof StudentFormValues;
+  label: string;
+  type?: string;
+  required?: boolean;
+  span?: "full" | "half";
+}> = [
+  { name: "admissionNumber", label: "Admission Number", required: true, span: "half" },
+  { name: "rollNumber", label: "Roll Number", required: true, span: "half" },
+  { name: "studentName", label: "Student Name", required: true, span: "full" },
+  { name: "fatherName", label: "Father's Name", required: true, span: "full" },
+  { name: "class", label: "Class", required: true, span: "half" },
+  { name: "mobileNumber", label: "Mobile Number", required: true, span: "half" },
+  { name: "whatsappNumber", label: "WhatsApp Number", span: "half" },
+  { name: "tuitionFee", label: "Tuition Fee (₹)", type: "number", required: true, span: "half" },
+  { name: "hostelFee", label: "Hostel Fee (₹)", type: "number", span: "half" },
+  { name: "miscellaneousFee", label: "Miscellaneous Fee (₹)", type: "number", span: "half" },
+];
+
+export function StudentFormDrawer() {
+  const drawerMode = useUIStore((s) => s.drawerMode);
+  const studentBeingEdited = useUIStore((s) => s.studentBeingEdited);
+  const closeDrawer = useUIStore((s) => s.closeDrawer);
+
+  const createStudent = useCreateStudent();
+  const updateStudent = useUpdateStudent();
+
+  const isOpen = drawerMode !== "closed";
+  const isEdit = drawerMode === "edit";
+  const isSubmitting = createStudent.isPending || updateStudent.isPending;
+
+  const {
+    register,
+    handleSubmit,
+    reset,
+    formState: { errors },
+  } = useForm<StudentFormValues>({
+    resolver: zodResolver(studentFormSchema) as never,
+    defaultValues: studentFormDefaults,
+  });
+
+  useEffect(() => {
+    if (isEdit && studentBeingEdited) {
+      reset({
+        admissionNumber: studentBeingEdited.admissionNumber,
+        rollNumber: studentBeingEdited.rollNumber,
+        studentName: studentBeingEdited.studentName,
+        fatherName: studentBeingEdited.fatherName,
+        class: studentBeingEdited.class,
+        mobileNumber: studentBeingEdited.mobileNumber,
+        whatsappNumber: studentBeingEdited.whatsappNumber ?? "",
+        tuitionFee: studentBeingEdited.tuitionFee,
+        hostelFee: studentBeingEdited.hostelFee ?? 0,
+        miscellaneousFee: studentBeingEdited.miscellaneousFee ?? 0,
+      });
+    } else if (drawerMode === "create") {
+      reset(studentFormDefaults);
+    }
+  }, [isEdit, studentBeingEdited, drawerMode, reset]);
+
+  if (!isOpen) return null;
+
+  const onSubmit = (values: StudentFormValues) => {
+    if (isEdit && studentBeingEdited) {
+      updateStudent.mutate(
+        { id: studentBeingEdited._id, values },
+        { onSuccess: () => closeDrawer() }
+      );
+    } else {
+      createStudent.mutate(values, { onSuccess: () => closeDrawer() });
+    }
+  };
+
+  const mutationError = createStudent.error ?? updateStudent.error;
+
+  return (
+    <div className="fixed inset-0 z-50 flex justify-end">
+      <button
+        aria-label="Close"
+        onClick={closeDrawer}
+        className="absolute inset-0 bg-[color:var(--color-ink)]/30"
+      />
+      <div className="drawer-enter relative flex h-full w-full max-w-md flex-col overflow-y-auto border-l border-[color:var(--color-paper-line)] bg-[color:var(--color-paper)] px-6 py-6 shadow-xl">
+        <div className="mb-1 flex items-start justify-between">
+          <div>
+            <p className="font-mono text-xs uppercase tracking-wide text-[color:var(--color-brass-dark)]">
+              {isEdit ? "Edit Entry" : "New Entry"}
+            </p>
+            <h2 className="font-display text-xl font-semibold">
+              {isEdit ? "Update Student Record" : "Add Student to Register"}
+            </h2>
+          </div>
+          <button
+            type="button"
+            onClick={closeDrawer}
+            aria-label="Close form"
+            className="rounded-sm p-1 text-[color:var(--color-ink-soft)] hover:bg-[color:var(--color-paper-line)]/40"
+          >
+            <X size={18} />
+          </button>
+        </div>
+
+        <form onSubmit={handleSubmit(onSubmit)} className="mt-5 flex flex-col gap-4">
+          <div className="grid grid-cols-2 gap-4">
+            {FIELDS.map((field) => (
+              <div key={field.name} className={field.span === "full" ? "col-span-2" : "col-span-1"}>
+                <label
+                  htmlFor={field.name}
+                  className="mb-1 block font-mono text-xs uppercase tracking-wide text-[color:var(--color-ink-soft)]"
+                >
+                  {field.label}
+                  {field.required && <span className="text-[color:var(--color-stamp-due)]"> *</span>}
+                </label>
+                <input
+                  id={field.name}
+                  type={field.type ?? "text"}
+                  step={field.type === "number" ? "0.01" : undefined}
+                  {...register(field.name)}
+                  className="w-full rounded-sm border border-[color:var(--color-paper-line)] bg-white px-3 py-2 text-sm"
+                />
+                {errors[field.name] && (
+                  <p className="mt-1 text-xs text-[color:var(--color-stamp-due)]">
+                    {errors[field.name]?.message as string}
+                  </p>
+                )}
+              </div>
+            ))}
+          </div>
+
+          {mutationError && (
+            <p className="rounded-sm bg-[color:var(--color-stamp-due)]/10 px-3 py-2 text-sm text-[color:var(--color-stamp-due)]">
+              {extractErrorMessage(mutationError)}
+            </p>
+          )}
+
+          <div className="mt-2 flex gap-3">
+            <button
+              type="submit"
+              disabled={isSubmitting}
+              className="flex-1 rounded-sm bg-[color:var(--color-brass)] px-4 py-2 text-sm font-medium text-white transition-colors hover:bg-[color:var(--color-brass-dark)] disabled:opacity-50"
+            >
+              {isSubmitting ? "Saving…" : isEdit ? "Save Changes" : "Add Student"}
+            </button>
+            <button
+              type="button"
+              onClick={closeDrawer}
+              className="rounded-sm border border-[color:var(--color-paper-line)] px-4 py-2 text-sm text-[color:var(--color-ink-soft)] hover:bg-[color:var(--color-paper-line)]/30"
+            >
+              Cancel
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+  );
+}
