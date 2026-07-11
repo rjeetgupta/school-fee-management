@@ -20,22 +20,22 @@ export function DeleteConfirmDialog() {
       <button
         aria-label="Close"
         onClick={cancelDelete}
-        className="absolute inset-0 bg-[color:var(--color-ink)]/30"
+        className="absolute inset-0 bg-ink/30"
       />
-      <div className="relative w-full max-w-sm rounded-sm border border-[color:var(--color-paper-line)] bg-[color:var(--color-paper)] p-6 shadow-xl">
-        <p className="font-mono text-xs uppercase tracking-wide text-[color:var(--color-stamp-due)]">
+      <div className="relative w-full max-w-sm rounded-sm border border-paper-line bg-paper p-6 shadow-xl">
+        <p className="font-mono text-xs uppercase tracking-wide text-stamp-due">
           Remove Entry
         </p>
         <h2 className="mt-1 font-display text-lg font-semibold">
           Delete {studentPendingDelete.studentName}?
         </h2>
-        <p className="mt-2 text-sm text-[color:var(--color-ink-soft)]">
+        <p className="mt-2 text-sm text-ink-soft">
           This removes admission no. {studentPendingDelete.admissionNumber} from the register.
           This cannot be undone.
         </p>
 
         {deleteStudent.isError && (
-          <p className="mt-3 rounded-sm bg-[color:var(--color-stamp-due)]/10 px-3 py-2 text-sm text-[color:var(--color-stamp-due)]">
+          <p className="mt-3 rounded-sm bg-stamp-due/10 px-3 py-2 text-sm text-stamp-due">
             {extractErrorMessage(deleteStudent.error)}
           </p>
         )}
@@ -45,14 +45,14 @@ export function DeleteConfirmDialog() {
             type="button"
             onClick={handleConfirm}
             disabled={deleteStudent.isPending}
-            className="flex-1 rounded-sm bg-[color:var(--color-stamp-due)] px-4 py-2 text-sm font-medium text-white hover:opacity-90 disabled:opacity-50"
+            className="flex-1 rounded-sm bg-stamp-due px-4 py-2 text-sm font-medium text-white hover:opacity-90 disabled:opacity-50"
           >
             {deleteStudent.isPending ? "Deleting…" : "Delete"}
           </button>
           <button
             type="button"
             onClick={cancelDelete}
-            className="rounded-sm border border-[color:var(--color-paper-line)] px-4 py-2 text-sm text-[color:var(--color-ink-soft)] hover:bg-[color:var(--color-paper-line)]/30"
+            className="rounded-sm border border-paper-line px-4 py-2 text-sm text-ink-soft hover:bg-paper-line/30"
           >
             Cancel
           </button>

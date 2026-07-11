@@ -104,12 +104,12 @@ export function FeeDepositDialog() {
       <button
         aria-label="Close"
         onClick={handleClose}
-        className="absolute inset-0 bg-[color:var(--color-ink)]/30"
+        className="absolute inset-0 bg-ink/30"
       />
-      <div className="drawer-enter relative flex max-h-[90vh] w-full max-w-md flex-col overflow-y-auto rounded-sm border border-[color:var(--color-paper-line)] bg-[color:var(--color-paper)] p-6 shadow-xl">
+      <div className="drawer-enter relative flex max-h-[90vh] w-full max-w-md flex-col overflow-y-auto rounded-sm border border-paper-line bg-paper p-6 shadow-xl">
         <div className="mb-4 flex items-start justify-between">
           <div>
-            <p className="font-mono text-xs uppercase tracking-wide text-[color:var(--color-brass-dark)]">
+            <p className="font-mono text-xs uppercase tracking-wide text-brass-dark">
               Fee Collection
             </p>
             <h2 className="font-display text-xl font-semibold">Deposit Fee</h2>
@@ -118,7 +118,7 @@ export function FeeDepositDialog() {
             type="button"
             onClick={handleClose}
             aria-label="Close"
-            className="rounded-sm p-1 text-[color:var(--color-ink-soft)] hover:bg-[color:var(--color-paper-line)]/40"
+            className="rounded-sm p-1 text-ink-soft hover:bg-paper-line/40"
           >
             <X size={18} />
           </button>
@@ -137,11 +137,11 @@ export function FeeDepositDialog() {
                   setSearchTriggered(false);
                 }}
                 placeholder="Admission no., name, or mobile number"
-                className="w-full rounded-sm border border-[color:var(--color-paper-line)] bg-white px-3 py-2 text-sm"
+                className="w-full rounded-sm border border-paper-line bg-white px-3 py-2 text-sm"
               />
               <button
                 type="submit"
-                className="flex items-center gap-1.5 rounded-sm bg-[color:var(--color-brass)] px-3.5 py-2 text-sm font-medium text-white hover:bg-[color:var(--color-brass-dark)]"
+                className="flex items-center gap-1.5 rounded-sm bg-brass px-3.5 py-2 text-sm font-medium text-white hover:bg-brass-dark"
               >
                 <Search size={15} /> Find
               </button>
@@ -149,11 +149,11 @@ export function FeeDepositDialog() {
 
             <div className="mt-4">
               {searchTriggered && searchResult.isLoading && (
-                <p className="font-mono text-xs text-[color:var(--color-ink-soft)]">Searching…</p>
+                <p className="font-mono text-xs text-ink-soft">Searching…</p>
               )}
 
               {searchTriggered && searchResult.isError && (
-                <p className="text-sm text-[color:var(--color-stamp-due)]">
+                <p className="text-sm text-stamp-due">
                   {extractErrorMessage(searchResult.error)}
                 </p>
               )}
@@ -161,7 +161,7 @@ export function FeeDepositDialog() {
               {searchTriggered &&
                 searchResult.data &&
                 searchResult.data.items.length === 0 && (
-                  <p className="font-mono text-xs text-[color:var(--color-ink-soft)]">
+                  <p className="font-mono text-xs text-ink-soft">
                     No matching student found.
                   </p>
                 )}
@@ -173,15 +173,15 @@ export function FeeDepositDialog() {
                       <button
                         type="button"
                         onClick={() => handlePickStudent(student)}
-                        className="flex w-full items-center justify-between rounded-sm border border-[color:var(--color-paper-line)] bg-white px-3 py-2 text-left text-sm hover:border-[color:var(--color-brass)]"
+                        className="flex w-full items-center justify-between rounded-sm border border-paper-line bg-white px-3 py-2 text-left text-sm hover:border-brass"
                       >
                         <span>
                           <span className="font-medium">{student.studentName}</span>{" "}
-                          <span className="font-mono text-xs text-[color:var(--color-ink-soft)]">
+                          <span className="font-mono text-xs text-ink-soft">
                             ({student.admissionNumber}) · Class {student.class}
                           </span>
                         </span>
-                        <span className="font-mono text-xs tabular-figures text-[color:var(--color-stamp-due)]">
+                        <span className="font-mono text-xs tabular-figures text-stamp-due">
                           Due ₹{(student.dueFee ?? 0).toLocaleString("en-IN")}
                         </span>
                       </button>
@@ -196,61 +196,61 @@ export function FeeDepositDialog() {
         {/* Step 2: student found — show details, due, deposit form, and history */}
         {depositTargetStudent && (
           <div className="flex flex-col gap-4">
-            <div className="rounded-sm border border-[color:var(--color-paper-line)] bg-white/60 p-3">
+            <div className="rounded-sm border border-paper-line bg-white/60 p-3">
               <div className="flex items-center justify-between">
                 <div>
                   <p className="font-medium">{depositTargetStudent.studentName}</p>
-                  <p className="font-mono text-xs text-[color:var(--color-ink-soft)]">
+                  <p className="font-mono text-xs text-ink-soft">
                     {depositTargetStudent.admissionNumber} · Class {depositTargetStudent.class}
                   </p>
                 </div>
                 <button
                   type="button"
                   onClick={clearDepositStudent}
-                  className="font-mono text-xs text-[color:var(--color-brass-dark)] underline"
+                  className="font-mono text-xs text-brass-dark underline"
                 >
                   Change
                 </button>
               </div>
               <div className="mt-2 flex justify-between font-mono text-sm tabular-figures">
-                <span className="text-[color:var(--color-ink-soft)]">
+                <span className="text-ink-soft">
                   Total Fee ₹{(depositTargetStudent.totalFee ?? 0).toLocaleString("en-IN")}
                 </span>
-                <span className="font-semibold text-[color:var(--color-stamp-due)]">
+                <span className="font-semibold text-stamp-due">
                   Due ₹{(depositTargetStudent.dueFee ?? 0).toLocaleString("en-IN")}
                 </span>
               </div>
             </div>
 
             <form onSubmit={handleSubmit(onDepositSubmit)} className="flex flex-col gap-3">
-              <p className="font-mono text-xs uppercase tracking-wide text-[color:var(--color-ink-soft)]">
+              <p className="font-mono text-xs uppercase tracking-wide text-ink-soft">
                 {paymentBeingEdited ? "Correct Deposit Amount" : "Deposit Amount"}
               </p>
 
               <div className="grid grid-cols-2 gap-3">
                 <div className="col-span-1">
-                  <label className="mb-1 block font-mono text-xs text-[color:var(--color-ink-soft)]">
+                  <label className="mb-1 block font-mono text-xs text-ink-soft">
                     Amount (₹) *
                   </label>
                   <input
                     type="number"
                     step="0.01"
                     {...register("amount")}
-                    className="w-full rounded-sm border border-[color:var(--color-paper-line)] bg-white px-3 py-2 text-sm"
+                    className="w-full rounded-sm border border-paper-line bg-white px-3 py-2 text-sm"
                   />
                   {errors.amount && (
-                    <p className="mt-1 text-xs text-[color:var(--color-stamp-due)]">
+                    <p className="mt-1 text-xs text-stamp-due">
                       {errors.amount.message}
                     </p>
                   )}
                 </div>
                 <div className="col-span-1">
-                  <label className="mb-1 block font-mono text-xs text-[color:var(--color-ink-soft)]">
+                  <label className="mb-1 block font-mono text-xs text-ink-soft">
                     Mode *
                   </label>
                   <select
                     {...register("paymentMode")}
-                    className="w-full rounded-sm border border-[color:var(--color-paper-line)] bg-white px-3 py-2 text-sm"
+                    className="w-full rounded-sm border border-paper-line bg-white px-3 py-2 text-sm"
                   >
                     {PAYMENT_MODES.map((mode) => (
                       <option key={mode} value={mode}>
@@ -262,19 +262,19 @@ export function FeeDepositDialog() {
               </div>
 
               <div>
-                <label className="mb-1 block font-mono text-xs text-[color:var(--color-ink-soft)]">
+                <label className="mb-1 block font-mono text-xs text-ink-soft">
                   Remarks
                 </label>
                 <input
                   type="text"
                   {...register("remarks")}
                   placeholder="Optional"
-                  className="w-full rounded-sm border border-[color:var(--color-paper-line)] bg-white px-3 py-2 text-sm"
+                  className="w-full rounded-sm border border-paper-line bg-white px-3 py-2 text-sm"
                 />
               </div>
 
               {mutationError && (
-                <p className="rounded-sm bg-[color:var(--color-stamp-due)]/10 px-3 py-2 text-sm text-[color:var(--color-stamp-due)]">
+                <p className="rounded-sm bg-stamp-due/10 px-3 py-2 text-sm text-stamp-due">
                   {extractErrorMessage(mutationError)}
                 </p>
               )}
@@ -283,7 +283,7 @@ export function FeeDepositDialog() {
                 <button
                   type="submit"
                   disabled={isSubmitting}
-                  className="flex flex-1 items-center justify-center gap-1.5 rounded-sm bg-[color:var(--color-brass)] px-4 py-2 text-sm font-medium text-white hover:bg-[color:var(--color-brass-dark)] disabled:opacity-50"
+                  className="flex flex-1 items-center justify-center gap-1.5 rounded-sm bg-brass px-4 py-2 text-sm font-medium text-white hover:bg-brass-dark disabled:opacity-50"
                 >
                   <Banknote size={15} />
                   {isSubmitting
@@ -299,7 +299,7 @@ export function FeeDepositDialog() {
                       cancelEditDeposit();
                       reset(depositFormDefaults);
                     }}
-                    className="rounded-sm border border-[color:var(--color-paper-line)] px-4 py-2 text-sm text-[color:var(--color-ink-soft)] hover:bg-[color:var(--color-paper-line)]/30"
+                    className="rounded-sm border border-paper-line px-4 py-2 text-sm text-ink-soft hover:bg-paper-line/30"
                   >
                     Cancel
                   </button>
@@ -309,14 +309,14 @@ export function FeeDepositDialog() {
 
             {/* Payment history with per-row "Update Deposit" to correct a wrong entry */}
             <div>
-              <p className="mb-2 font-mono text-xs uppercase tracking-wide text-[color:var(--color-ink-soft)]">
+              <p className="mb-2 font-mono text-xs uppercase tracking-wide text-ink-soft">
                 Payment History
               </p>
               {paymentHistory.isLoading && (
-                <p className="font-mono text-xs text-[color:var(--color-ink-soft)]">Loading…</p>
+                <p className="font-mono text-xs text-ink-soft">Loading…</p>
               )}
               {paymentHistory.data && paymentHistory.data.length === 0 && (
-                <p className="font-mono text-xs text-[color:var(--color-ink-soft)]">
+                <p className="font-mono text-xs text-ink-soft">
                   No deposits yet.
                 </p>
               )}
@@ -327,7 +327,7 @@ export function FeeDepositDialog() {
                       key={p._id}
                       className="ledger-rule flex items-center justify-between py-1.5 text-sm"
                     >
-                      <span className="font-mono text-xs text-[color:var(--color-ink-soft)]">
+                      <span className="font-mono text-xs text-ink-soft">
                         {p.receiptNumber} · {new Date(p.paymentDate).toLocaleDateString("en-IN")} ·{" "}
                         {p.paymentMode}
                       </span>
@@ -339,7 +339,7 @@ export function FeeDepositDialog() {
                           type="button"
                           onClick={() => beginEditDeposit(p._id, p.amount, p.paymentMode, p.remarks)}
                           aria-label={`Update deposit ${p.receiptNumber}`}
-                          className="rounded-sm p-1 text-[color:var(--color-ink-soft)] hover:bg-[color:var(--color-paper-line)]/40 hover:text-[color:var(--color-ink)]"
+                          className="rounded-sm p-1 text-ink-soft hover:bg-paper-line/40 hover:text-ink"
                         >
                           <Pencil size={13} />
                         </button>

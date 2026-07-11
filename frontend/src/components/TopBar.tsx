@@ -12,9 +12,6 @@ export function TopBar() {
           <p className="font-mono text-xs uppercase tracking-[0.2em] text-brass-dark">
             Student Register
           </p>
-          <h1 className="font-display text-3xl font-semibold text-ink">
-            Fee Register
-          </h1>
         </div>
         <div className="flex items-center gap-3">
           <span className="font-mono text-xs text-ink-soft">

@@ -13,7 +13,7 @@ export function Navigation() {
   console.log(user);
   return (
     <header className="border-b-2 border-ink">
-      <div className="mx-auto flex max-w-5xl items-center justify-between px-6 py-4">
+      <div className="mx-auto flex max-w-7xl items-center justify-between px-6 py-4">
         <Link
           to="/"
           className="flex items-center gap-2"
@@ -23,7 +23,7 @@ export function Navigation() {
             className="text-brass-dark"
           />
           <span className="font-display text-lg font-semibold text-ink">
-            Fee Register
+            Fee Register Management
           </span>
         </Link>
 

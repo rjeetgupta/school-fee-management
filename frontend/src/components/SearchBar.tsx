@@ -14,11 +14,11 @@ export function SearchBar() {
           value={search}
           onChange={(e) => setSearch(e.target.value)}
           placeholder="Search admission no., name, father's name, mobile…"
-          className="w-full rounded-sm border border-[color:var(--color-paper-line)] bg-white/60 px-3 py-2 text-sm text-[color:var(--color-ink)] placeholder:text-[color:var(--color-ink-soft)] focus:bg-white"
+          className="w-full rounded-sm border border-paper-line bg-white/60 px-3 py-2 text-sm text-ink placeholder:text-ink-soft focus:bg-white"
         />
       </div>
       <div className="flex items-center gap-2">
-        <label htmlFor="class-filter" className="font-mono text-xs uppercase tracking-wide text-[color:var(--color-ink-soft)]">
+        <label htmlFor="class-filter" className="font-mono text-xs uppercase tracking-wide text-ink-soft">
           Class
         </label>
         <input
@@ -27,7 +27,7 @@ export function SearchBar() {
           value={classFilter}
           onChange={(e) => setClassFilter(e.target.value)}
           placeholder="All"
-          className="w-24 rounded-sm border border-[color:var(--color-paper-line)] bg-white/60 px-2 py-2 text-sm focus:bg-white"
+          className="w-24 rounded-sm border border-paper-line bg-white/60 px-2 py-2 text-sm focus:bg-white"
         />
       </div>
     </div>

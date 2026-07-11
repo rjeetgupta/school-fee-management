@@ -88,12 +88,12 @@ export function StudentFormDrawer() {
       <button
         aria-label="Close"
         onClick={closeDrawer}
-        className="absolute inset-0 bg-[color:var(--color-ink)]/30"
+        className="absolute inset-0 bg-ink/30"
       />
-      <div className="drawer-enter relative flex h-full w-full max-w-md flex-col overflow-y-auto border-l border-[color:var(--color-paper-line)] bg-[color:var(--color-paper)] px-6 py-6 shadow-xl">
+      <div className="drawer-enter relative flex h-full w-full max-w-md flex-col overflow-y-auto border-l border-paper-line bg-paper px-6 py-6 shadow-xl">
         <div className="mb-1 flex items-start justify-between">
           <div>
-            <p className="font-mono text-xs uppercase tracking-wide text-[color:var(--color-brass-dark)]">
+            <p className="font-mono text-xs uppercase tracking-wide text-brass-dark">
               {isEdit ? "Edit Entry" : "New Entry"}
             </p>
             <h2 className="font-display text-xl font-semibold">
@@ -104,7 +104,7 @@ export function StudentFormDrawer() {
             type="button"
             onClick={closeDrawer}
             aria-label="Close form"
-            className="rounded-sm p-1 text-[color:var(--color-ink-soft)] hover:bg-[color:var(--color-paper-line)]/40"
+            className="rounded-sm p-1 text-ink-soft hover:bg-paper-line/40"
           >
             <X size={18} />
           </button>
@@ -116,20 +116,20 @@ export function StudentFormDrawer() {
               <div key={field.name} className={field.span === "full" ? "col-span-2" : "col-span-1"}>
                 <label
                   htmlFor={field.name}
-                  className="mb-1 block font-mono text-xs uppercase tracking-wide text-[color:var(--color-ink-soft)]"
+                  className="mb-1 block font-mono text-xs uppercase tracking-wide text-ink-soft"
                 >
                   {field.label}
-                  {field.required && <span className="text-[color:var(--color-stamp-due)]"> *</span>}
+                  {field.required && <span className="text-stamp-due"> *</span>}
                 </label>
                 <input
                   id={field.name}
                   type={field.type ?? "text"}
                   step={field.type === "number" ? "0.01" : undefined}
                   {...register(field.name)}
-                  className="w-full rounded-sm border border-[color:var(--color-paper-line)] bg-white px-3 py-2 text-sm"
+                  className="w-full rounded-sm border border-paper-line bg-white px-3 py-2 text-sm"
                 />
                 {errors[field.name] && (
-                  <p className="mt-1 text-xs text-[color:var(--color-stamp-due)]">
+                  <p className="mt-1 text-xs text-stamp-due">
                     {errors[field.name]?.message as string}
                   </p>
                 )}
@@ -138,7 +138,7 @@ export function StudentFormDrawer() {
           </div>
 
           {mutationError && (
-            <p className="rounded-sm bg-[color:var(--color-stamp-due)]/10 px-3 py-2 text-sm text-[color:var(--color-stamp-due)]">
+            <p className="rounded-sm bg-stamp-due/10 px-3 py-2 text-sm text-stamp-due">
               {extractErrorMessage(mutationError)}
             </p>
           )}
@@ -147,14 +147,14 @@ export function StudentFormDrawer() {
             <button
               type="submit"
               disabled={isSubmitting}
-              className="flex-1 rounded-sm bg-[color:var(--color-brass)] px-4 py-2 text-sm font-medium text-white transition-colors hover:bg-[color:var(--color-brass-dark)] disabled:opacity-50"
+              className="flex-1 rounded-sm bg-brass px-4 py-2 text-sm font-medium text-white transition-colors hover:bg-brass-dark disabled:opacity-50"
             >
               {isSubmitting ? "Saving…" : isEdit ? "Save Changes" : "Add Student"}
             </button>
             <button
               type="button"
               onClick={closeDrawer}
-              className="rounded-sm border border-[color:var(--color-paper-line)] px-4 py-2 text-sm text-[color:var(--color-ink-soft)] hover:bg-[color:var(--color-paper-line)]/30"
+              className="rounded-sm border border-paper-line px-4 py-2 text-sm text-ink-soft hover:bg-paper-line/30"
             >
               Cancel
             </button>

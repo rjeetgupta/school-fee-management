@@ -15,8 +15,8 @@ export function StampBadge({ status }: StampBadgeProps) {
       className={
         "stamp " +
         (isActive
-          ? "text-[color:var(--color-stamp-paid)]"
-          : "text-[color:var(--color-ink-soft)]")
+          ? "text-stamp-paid"
+          : "text-ink-soft")
       }
     >
       {status}

@@ -11,7 +11,7 @@ export function Pagination({ page, totalPages, total, onPageChange }: Pagination
   if (total === 0) return null;
 
   return (
-    <div className="flex items-center justify-between border-t border-[color:var(--color-paper-line)] pt-3 font-mono text-xs text-[color:var(--color-ink-soft)]">
+    <div className="flex items-center justify-between border-t border-paper-line pt-3 font-mono text-xs text-ink-soft">
       <span>
         Page {page} of {totalPages} · {total} {total === 1 ? "entry" : "entries"}
       </span>
@@ -20,7 +20,7 @@ export function Pagination({ page, totalPages, total, onPageChange }: Pagination
           type="button"
           disabled={page <= 1}
           onClick={() => onPageChange(page - 1)}
-          className="flex items-center gap-1 rounded-sm px-2 py-1 disabled:opacity-30 hover:bg-[color:var(--color-paper-line)]/40 disabled:hover:bg-transparent"
+          className="flex items-center gap-1 rounded-sm px-2 py-1 disabled:opacity-30 hover:bg-paper-line/40 disabled:hover:bg-transparent"
         >
           <ChevronLeft size={14} /> Prev
         </button>
@@ -28,7 +28,7 @@ export function Pagination({ page, totalPages, total, onPageChange }: Pagination
           type="button"
           disabled={page >= totalPages}
           onClick={() => onPageChange(page + 1)}
-          className="flex items-center gap-1 rounded-sm px-2 py-1 disabled:opacity-30 hover:bg-[color:var(--color-paper-line)]/40 disabled:hover:bg-transparent"
+          className="flex items-center gap-1 rounded-sm px-2 py-1 disabled:opacity-30 hover:bg-paper-line/40 disabled:hover:bg-transparent"
         >
           Next <ChevronRight size={14} />
         </button>

@@ -24,15 +24,15 @@ export function StudentsPage() {
   });
 
   return (
-    <div className="mx-auto max-w-5xl px-6 py-8">
+    <div className="mx-auto max-w-7xl px-6 py-8">
       <TopBar />
 
-      <div className="mt-6 rounded-sm border border-[color:var(--color-paper-line)] bg-white/40 p-5">
+      <div className="mt-6 rounded-sm border border-paper-line bg-white/40 p-5">
         <SearchBar />
 
         <div className="mt-5">
           {isError ? (
-            <div className="rounded-sm bg-[color:var(--color-stamp-due)]/10 px-4 py-6 text-center text-sm text-[color:var(--color-stamp-due)]">
+            <div className="rounded-sm bg-stamp-due/10 px-4 py-6 text-center text-sm text-stamp-due">
               Couldn't load the register. {extractErrorMessage(error)}
               <br />
               <span className="font-mono text-xs">
