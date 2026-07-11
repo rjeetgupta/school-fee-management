@@ -4,6 +4,7 @@ import { BrowserRouter, Route, Routes } from "react-router";
 import { ProtectedRoute } from "@/components/ProtectedRoute";
 import { LandingPage } from "@/pages/LandingPage";
 import { LoginPage } from "@/pages/LoginPage";
+import { Layout } from "./components/Layout";
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -17,20 +18,25 @@ const queryClient = new QueryClient({
 function App() {
   return (
     <QueryClientProvider client={queryClient}>
-       <BrowserRouter>
-        <Routes>
-          <Route path="/" element={<LandingPage />} />
-          <Route path="/login" element={<LoginPage />} />
+
+    <BrowserRouter>
+      <Routes>
+        <Route element={<Layout />}>
+          <Route index element={<LandingPage />} />
+
           <Route
-            path="/dashboard"
+            path="dashboard"
             element={
               <ProtectedRoute>
                 <StudentsPage />
               </ProtectedRoute>
             }
           />
-        </Routes>
-      </BrowserRouter>
+        </Route>
+
+        <Route path="login" element={<LoginPage />} />
+      </Routes>
+    </BrowserRouter>
     </QueryClientProvider>
   );
 }

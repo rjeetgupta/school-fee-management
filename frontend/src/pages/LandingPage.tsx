@@ -4,12 +4,13 @@ import { Footer } from "@/components/Footer";
 
 export function LandingPage() {
   return (
-    <div className="flex min-h-screen flex-col">
-      <Navigation />
-      <main className="flex-1">
-        <Hero />
-      </main>
-      <Footer />
-    </div>
+    // <div className="flex min-h-screen flex-col">
+    //   <Navigation />
+    //   <main className="flex-1">
+    //     <Hero />
+    //   </main>
+    //   <Footer />
+    // </div>
+    <Hero />
   );
 }
