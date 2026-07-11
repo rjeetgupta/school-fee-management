@@ -6,6 +6,10 @@ interface EnvConfig {
   port: number;
   nodeEnv: string;
   mongoUri: string;
+  jwtSecret: string;
+  jwtExpiresIn: string;
+  adminEmail: string;
+  adminPassword: string;
 }
 
 function getEnvVar(key: string, fallback?: string): string {
@@ -20,4 +24,8 @@ export const env: EnvConfig = {
   port: Number(getEnvVar("PORT", "5000")),
   nodeEnv: getEnvVar("NODE_ENV", "development"),
   mongoUri: getEnvVar("MONGO_URI", "mongodb://127.0.0.1:27017/school_fee_management"),
+  jwtSecret: getEnvVar("JWT_SECRET"),
+  jwtExpiresIn: getEnvVar("JWT_EXPIRES_IN", "1d"),
+  adminEmail: getEnvVar("ADMIN_EMAIL"),
+  adminPassword: getEnvVar("ADMIN_PASSWORD"),
 };

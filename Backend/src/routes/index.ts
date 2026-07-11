@@ -1,4 +1,5 @@
 import { Router } from "express";
+import authRoutes from "routes/auth.routes";
 import studentRoutes from "@routes/student.routes";
 import paymentRoutes from "@routes/payment.routes";
 // import dashboardRoutes from "@routes/dashboard.routes"; // Module 5
@@ -6,6 +7,7 @@ import paymentRoutes from "@routes/payment.routes";
 
 const router = Router();
 
+router.use("/auth", authRoutes);
 router.use("/students", studentRoutes);
 router.use("/payments", paymentRoutes);
 // router.use("/dashboard", dashboardRoutes);
