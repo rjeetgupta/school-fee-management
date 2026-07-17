@@ -6,6 +6,7 @@ import type { DepositFormValues } from "@/validations/payment.schema";
 
 const STUDENTS_KEY = "students";
 const PAYMENTS_KEY = "payments";
+const FEE_MONTHS_KEY = "fee-months";
 
 export function useDepositFee() {
   const queryClient = useQueryClient();
@@ -18,9 +19,10 @@ export function useDepositFee() {
       return data.data;
     },
     onSuccess: () => {
-      // Refresh the ledger table (dueFee changed) and any open payment history.
+      // Refresh the ledger table and any open payment/fee-month views.
       queryClient.invalidateQueries({ queryKey: [STUDENTS_KEY] });
       queryClient.invalidateQueries({ queryKey: [PAYMENTS_KEY] });
+      queryClient.invalidateQueries({ queryKey: [FEE_MONTHS_KEY] });
     },
   });
 }
@@ -44,6 +46,7 @@ export function useUpdateDeposit() {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: [STUDENTS_KEY] });
       queryClient.invalidateQueries({ queryKey: [PAYMENTS_KEY] });
+      queryClient.invalidateQueries({ queryKey: [FEE_MONTHS_KEY] });
     },
   });
 }
