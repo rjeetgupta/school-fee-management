@@ -23,7 +23,7 @@ export function DeleteConfirmDialog() {
         className="absolute inset-0 bg-ink/30"
       />
       <div className="relative w-full max-w-sm rounded-sm border border-paper-line bg-paper p-6 shadow-xl">
-        <p className="font-mono text-xs uppercase tracking-wide text-stamp-due">
+        <p className="font-mono text-xs uppercase tracking-wide text-danger">
           Remove Entry
         </p>
         <h2 className="mt-1 font-display text-lg font-semibold">
@@ -35,7 +35,7 @@ export function DeleteConfirmDialog() {
         </p>
 
         {deleteStudent.isError && (
-          <p className="mt-3 rounded-sm bg-stamp-due/10 px-3 py-2 text-sm text-stamp-due">
+          <p className="mt-3 rounded-sm bg-danger/10 px-3 py-2 text-sm text-danger">
             {extractErrorMessage(deleteStudent.error)}
           </p>
         )}
@@ -45,7 +45,7 @@ export function DeleteConfirmDialog() {
             type="button"
             onClick={handleConfirm}
             disabled={deleteStudent.isPending}
-            className="flex-1 rounded-sm bg-stamp-due px-4 py-2 text-sm font-medium text-white hover:opacity-90 disabled:opacity-50"
+            className="flex-1 rounded-sm bg-danger px-4 py-2 text-sm font-medium text-white hover:opacity-90 disabled:opacity-50"
           >
             {deleteStudent.isPending ? "Deleting…" : "Delete"}
           </button>

@@ -27,8 +27,8 @@ export function LedgerTable({ students, isLoading, page, limit }: LedgerTablePro
   if (students.length === 0) {
     return (
       <div className="py-16 text-center">
-        <p className="font-display text-lg text-ink">No entries found.</p>
-        <p className="mt-1 font-mono text-xs text-ink-soft">
+        <p className="font-display text-lg text-[color:var(--color-ink">No entries found.</p>
+        <p className="mt-1 font-mono text-xs text-[color:var(--color-ink-soft">
           Add a student, or adjust your search and class filter.
         </p>
       </div>
@@ -44,15 +44,13 @@ export function LedgerTable({ students, isLoading, page, limit }: LedgerTablePro
     <div className="overflow-x-auto">
       <table className="w-full border-collapse text-sm">
         <thead>
-          <tr className="ledger-rule text-left font-mono text-xs uppercase tracking-wide text-ink-soft">
+          <tr className="ledger-rule text-left font-mono text-xs uppercase tracking-wide text-[color:var(--color-ink-soft">
             <th className="w-12 py-2 pr-2 font-normal">#</th>
             <th className="py-2 pr-4 font-normal">Adm. No.</th>
             <th className="py-2 pr-4 font-normal">Name</th>
             <th className="py-2 pr-4 font-normal">Class</th>
             <th className="py-2 pr-4 font-normal">Roll</th>
-            <th className="py-2 pr-4 font-normal">Address</th>
             <th className="py-2 pr-4 text-right font-normal">Total Fee</th>
-            <th className="py-2 pr-4 text-right font-normal">Due</th>
             <th className="py-2 pr-4 font-normal">Status</th>
             <th className="py-2 pr-2 text-right font-normal">Actions</th>
           </tr>
@@ -62,35 +60,22 @@ export function LedgerTable({ students, isLoading, page, limit }: LedgerTablePro
             const totalFee =
               student.totalFee ??
               (student.tuitionFee ?? 0) + (student.hostelFee ?? 0) + (student.miscellaneousFee ?? 0);
-            const dueFee = student.dueFee ?? totalFee;
             const serial = (page - 1) * limit + index + 1;
 
             return (
               <tr key={student._id} className="ledger-rule group">
-                <td className="py-2.5 pr-2 font-mono text-xs text-ink-soft">
+                <td className="py-2.5 pr-2 font-mono text-xs text-[color:var(--color-ink-soft">
                   {serial}
                 </td>
                 <td className="py-2.5 pr-4 font-mono tabular-figures">{student.admissionNumber}</td>
                 <td className="py-2.5 pr-4">
                   <p className="font-medium">{student.studentName}</p>
-                  <p className="text-xs text-ink-soft">{student.fatherName}</p>
+                  <p className="text-xs text-[color:var(--color-ink-soft">{student.fatherName}</p>
                 </td>
-                <td className="py-2.5 pr-4">{student.class}</td>
+                <td className="py-2.5 pr-4">{student.class}-{student.section}</td>
                 <td className="py-2.5 pr-4 font-mono tabular-figures">{student.rollNumber}</td>
-                <td className="py-2.5 pr-4 font-mono tabular-figures">{student.address}</td>
                 <td className="py-2.5 pr-4 text-right font-mono tabular-figures">
                   ₹{totalFee.toLocaleString("en-IN")}
-                </td>
-                <td className="py-2.5 pr-4 text-right font-mono tabular-figures">
-                  <span
-                    className={
-                      dueFee > 0
-                        ? "font-semibold text-stamp-due"
-                        : "text-stamp-paid"
-                    }
-                  >
-                    ₹{dueFee.toLocaleString("en-IN")}
-                  </span>
                 </td>
                 <td className="py-2.5 pr-4">
                   <StampBadge status={student.status} />
@@ -101,7 +86,7 @@ export function LedgerTable({ students, isLoading, page, limit }: LedgerTablePro
                       type="button"
                       onClick={() => handleDeposit(student)}
                       aria-label={`Deposit fee for ${student.studentName}`}
-                      className="rounded-sm p-1.5 text-ink-soft hover:bg-brass/10 hover:text-brass-dark"
+                      className="rounded-sm p-1.5 text-[color:var(--color-ink-soft hover:bg-[color:var(--color-gold/10 hover:text-[color:var(--color-gold-dark"
                     >
                       <Banknote size={15} />
                     </button>
@@ -109,7 +94,7 @@ export function LedgerTable({ students, isLoading, page, limit }: LedgerTablePro
                       type="button"
                       onClick={() => openEditDrawer(student)}
                       aria-label={`Edit ${student.studentName}`}
-                      className="rounded-sm p-1.5 text-ink-soft hover:bg-paper-line/40 hover:text-ink"
+                      className="rounded-sm p-1.5 text-[color:var(--color-ink-soft hover:bg-[color:var(--color-paper-line/40 hover:text-[color:var(--color-ink"
                     >
                       <Pencil size={15} />
                     </button>
@@ -117,7 +102,7 @@ export function LedgerTable({ students, isLoading, page, limit }: LedgerTablePro
                       type="button"
                       onClick={() => requestDelete(student)}
                       aria-label={`Delete ${student.studentName}`}
-                      className="rounded-sm p-1.5 text-ink-soft hover:bg-stamp-due/10 hover:text-stamp-due"
+                      className="rounded-sm p-1.5 text-[color:var(--color-ink-soft hover:bg-[color:var(--color-danger/10 hover:text-[color:var(--color-danger"
                     >
                       <Trash2 size={15} />
                     </button>

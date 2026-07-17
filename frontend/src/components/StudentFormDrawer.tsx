@@ -5,13 +5,14 @@ import { X } from "lucide-react";
 import { useUIStore } from "@/store/useUIStore";
 import { studentFormSchema, studentFormDefaults } from "@/validations/student.schema";
 import type { StudentFormValues } from "@/validations/student.schema";
+import { GENDERS } from "@/types/student";
 import { useCreateStudent, useUpdateStudent } from "@/hooks/useStudents";
 import { extractErrorMessage } from "@/lib/api";
 
 const FIELDS: Array<{
   name: keyof StudentFormValues;
   label: string;
-  type?: string;
+  type?: "text" | "number" | "email" | "date" | "select";
   required?: boolean;
   span?: "full" | "half";
 }> = [
@@ -20,8 +21,13 @@ const FIELDS: Array<{
   { name: "studentName", label: "Student Name", required: true, span: "full" },
   { name: "fatherName", label: "Father's Name", required: true, span: "full" },
   { name: "class", label: "Class", required: true, span: "half" },
+  { name: "section", label: "Section", required: true, span: "half" },
+  { name: "gender", label: "Gender", type: "select", required: true, span: "half" },
+  { name: "dateOfBirth", label: "Date of Birth", type: "date", required: true, span: "half" },
+  { name: "email", label: "Email", type: "email", required: true, span: "full" },
   { name: "mobileNumber", label: "Mobile Number", required: true, span: "half" },
   { name: "whatsappNumber", label: "WhatsApp Number", span: "half" },
+  { name: "address", label: "Address", span: "full" },
   { name: "tuitionFee", label: "Tuition Fee (₹)", type: "number", required: true, span: "half" },
   { name: "hostelFee", label: "Hostel Fee (₹)", type: "number", span: "half" },
   { name: "miscellaneousFee", label: "Miscellaneous Fee (₹)", type: "number", span: "half" },
@@ -57,8 +63,13 @@ export function StudentFormDrawer() {
         studentName: studentBeingEdited.studentName,
         fatherName: studentBeingEdited.fatherName,
         class: studentBeingEdited.class,
+        section: studentBeingEdited.section,
+        gender: studentBeingEdited.gender,
+        dateOfBirth: studentBeingEdited.dateOfBirth?.slice(0, 10) ?? "",
+        email: studentBeingEdited.email,
         mobileNumber: studentBeingEdited.mobileNumber,
         whatsappNumber: studentBeingEdited.whatsappNumber ?? "",
+        address: studentBeingEdited.address ?? "",
         tuitionFee: studentBeingEdited.tuitionFee,
         hostelFee: studentBeingEdited.hostelFee ?? 0,
         miscellaneousFee: studentBeingEdited.miscellaneousFee ?? 0,
@@ -93,7 +104,7 @@ export function StudentFormDrawer() {
       <div className="drawer-enter relative flex h-full w-full max-w-md flex-col overflow-y-auto border-l border-paper-line bg-paper px-6 py-6 shadow-xl">
         <div className="mb-1 flex items-start justify-between">
           <div>
-            <p className="font-mono text-xs uppercase tracking-wide text-brass-dark">
+            <p className="font-mono text-xs uppercase tracking-wide text-gold-dark">
               {isEdit ? "Edit Entry" : "New Entry"}
             </p>
             <h2 className="font-display text-xl font-semibold">
@@ -119,17 +130,31 @@ export function StudentFormDrawer() {
                   className="mb-1 block font-mono text-xs uppercase tracking-wide text-ink-soft"
                 >
                   {field.label}
-                  {field.required && <span className="text-stamp-due"> *</span>}
+                  {field.required && <span className="text-danger"> *</span>}
                 </label>
-                <input
-                  id={field.name}
-                  type={field.type ?? "text"}
-                  step={field.type === "number" ? "0.01" : undefined}
-                  {...register(field.name)}
-                  className="w-full rounded-sm border border-paper-line bg-white px-3 py-2 text-sm"
-                />
+                {field.type === "select" ? (
+                  <select
+                    id={field.name}
+                    {...register(field.name)}
+                    className="w-full rounded-sm border border-paper-line bg-white px-3 py-2 text-sm"
+                  >
+                    {GENDERS.map((g) => (
+                      <option key={g} value={g}>
+                        {g}
+                      </option>
+                    ))}
+                  </select>
+                ) : (
+                  <input
+                    id={field.name}
+                    type={field.type ?? "text"}
+                    step={field.type === "number" ? "0.01" : undefined}
+                    {...register(field.name)}
+                    className="w-full rounded-sm border border-paper-line bg-white px-3 py-2 text-sm"
+                  />
+                )}
                 {errors[field.name] && (
-                  <p className="mt-1 text-xs text-stamp-due">
+                  <p className="mt-1 text-xs text-danger">
                     {errors[field.name]?.message as string}
                   </p>
                 )}
@@ -138,7 +163,7 @@ export function StudentFormDrawer() {
           </div>
 
           {mutationError && (
-            <p className="rounded-sm bg-stamp-due/10 px-3 py-2 text-sm text-stamp-due">
+            <p className="rounded-sm bg-danger/10 px-3 py-2 text-sm text-danger">
               {extractErrorMessage(mutationError)}
             </p>
           )}
@@ -147,7 +172,7 @@ export function StudentFormDrawer() {
             <button
               type="submit"
               disabled={isSubmitting}
-              className="flex-1 rounded-sm bg-brass px-4 py-2 text-sm font-medium text-white transition-colors hover:bg-brass-dark disabled:opacity-50"
+              className="flex-1 rounded-sm bg-gold px-4 py-2 text-sm font-medium text-white transition-colors hover:bg-gold-dark disabled:opacity-50"
             >
               {isSubmitting ? "Saving…" : isEdit ? "Save Changes" : "Add Student"}
             </button>
