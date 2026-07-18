@@ -32,10 +32,12 @@ interface UIState {
   // and the table without prop drilling.
   search: string;
   classFilter: string;
+  sectionFilter: string;
   page: number;
   limit: number;
   setSearch: (value: string) => void;
   setClassFilter: (value: string) => void;
+  setSectionFilter: (value: string) => void;
   setPage: (value: number) => void;
 }
 
@@ -64,9 +66,11 @@ export const useUIStore = create<UIState>((set) => ({
 
   search: "",
   classFilter: "",
+  sectionFilter: "",
   page: 1,
   limit: 10,
   setSearch: (value) => set({ search: value, page: 1 }),
   setClassFilter: (value) => set({ classFilter: value, page: 1 }),
+  setSectionFilter: (value) => set({ sectionFilter: value, page: 1 }),
   setPage: (value) => set({ page: value }),
 }));
