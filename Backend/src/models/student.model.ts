@@ -41,10 +41,35 @@ const studentSchema = new Schema<StudentDocument>(
       index: true,
     },
 
+    section: {
+      type: String,
+      required: true,
+      trim: true,
+      uppercase: true,
+    },
+
+    email: {
+      type: String,
+      required: true,
+      trim: true,
+      lowercase: true,
+    },
+
+    gender: {
+      type: String,
+      enum: ["Male", "Female", "Other"],
+      required: true,
+    },
+
     mobileNumber: {
       type: String,
       required: true,
       trim: true,
+    },
+
+    dateOfBirth: {
+      type: Date,
+      required: true,
     },
 
     whatsappNumber: {
@@ -106,10 +131,10 @@ const studentSchema = new Schema<StudentDocument>(
   { timestamps: true }
 );
 
-// Roll Number must be unique within a class (Business Rule 2)
-studentSchema.index({ class: 1, rollNumber: 1 }, { unique: true });
+// Roll Number must be unique within a class + section (Business Rule 2, extended for sections)
+studentSchema.index({ class: 1, section: 1, rollNumber: 1 }, { unique: true });
 
 // Text index to support search by name/father name (in addition to regex search)
-studentSchema.index({ studentName: "text", fatherName: "text" });
+studentSchema.index({ studentName: "text", fatherName: "text", email: "text" });
 
 export const StudentModel = model<StudentDocument>("Student", studentSchema);
