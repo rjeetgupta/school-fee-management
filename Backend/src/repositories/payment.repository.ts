@@ -14,6 +14,10 @@ class PaymentRepository {
     return PaymentModel.find({ student: studentId }).sort({ paymentDate: -1 }).exec();
   }
 
+  async findByRazorpayOrderId(razorpayOrderId: string): Promise<PaymentDocument | null> {
+    return PaymentModel.findOne({ razorpayOrderId }).exec();
+  }
+
   async updateById(
     id: string,
     data: Partial<PaymentDocument>
@@ -26,6 +30,34 @@ class PaymentRepository {
 
   async deleteById(id: string): Promise<PaymentDocument | null> {
     return PaymentModel.findByIdAndDelete(id).exec();
+  }
+
+  /**
+   * Sum of successful payments within a date range (inclusive of start,
+   * exclusive of end) — used for "today's" and "this month's" collection
+   * figures on the admin dashboard.
+   */
+  async sumByDateRange(start: Date, end: Date): Promise<number> {
+    const result = await PaymentModel.aggregate<{ total: number }>([
+      {
+        $match: {
+          status: "Success",
+          paymentDate: { $gte: start, $lt: end },
+        },
+      },
+      { $group: { _id: null, total: { $sum: "$amount" } } },
+    ]);
+
+    return result[0]?.total ?? 0;
+  }
+
+  /** Most recent successful payments across all students, for the dashboard's activity feed. */
+  async findRecent(limit: number): Promise<PaymentDocument[]> {
+    return PaymentModel.find({ status: "Success" })
+      .sort({ paymentDate: -1 })
+      .limit(limit)
+      .populate("student", "studentName admissionNumber class section")
+      .exec();
   }
 
   /**

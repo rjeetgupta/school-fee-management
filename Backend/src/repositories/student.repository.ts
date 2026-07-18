@@ -20,6 +20,10 @@ class StudentRepository {
     return StudentModel.findOne({ admissionNumber }).exec();
   }
 
+  async countAll(): Promise<number> {
+    return StudentModel.countDocuments({}).exec();
+  }
+
   async findAll(filters: StudentFilterQuery): Promise<PaginatedResult<StudentDocument>> {
     const page = filters.page && filters.page > 0 ? filters.page : 1;
     const limit = filters.limit && filters.limit > 0 ? filters.limit : 20;
@@ -31,6 +35,10 @@ class StudentRepository {
       query.class = filters.class;
     }
 
+    if (filters.section) {
+      query.section = filters.section.toUpperCase();
+    }
+
     if (filters.search) {
       const regex = new RegExp(filters.search, "i");
       query.$or = [
@@ -39,6 +47,7 @@ class StudentRepository {
         { studentName: regex },
         { fatherName: regex },
         { mobileNumber: regex },
+        { email: regex },
       ];
     }
 
@@ -73,9 +82,14 @@ class StudentRepository {
   async existsByRollNumberInClass(
     rollNumber: string,
     studentClass: string,
+    section: string,
     excludeId?: string
   ): Promise<boolean> {
-    const query: FilterQuery<StudentDocument> = { rollNumber, class: studentClass };
+    const query: FilterQuery<StudentDocument> = {
+      rollNumber,
+      class: studentClass,
+      section: section.toUpperCase(),
+    };
     if (excludeId) {
       query._id = { $ne: excludeId };
     }
