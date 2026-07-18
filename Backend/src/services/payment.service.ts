@@ -1,24 +1,34 @@
 import { paymentRepository } from "@repositories/payment.repository";
 import { studentRepository } from "@repositories/student.repository";
 import { counterRepository } from "@repositories/counter.repository";
+import { feeMonthService } from "@services/feeMonth.service";
 import { generateReceiptNumber } from "@utils/generateReceiptNumber";
 import { ApiError } from "@utils/ApiError";
 import { PaymentDocument } from "@models/payment.model";
-import { StudentDocument } from "@models/student.model";
-import { DepositFeeInput, UpdateDepositInput } from "@app-types/payment.types";
+import { PaymentStatus, PaymentChannel, DepositFeeInput, UpdateDepositInput } from "@app-types/payment.types";
+import { ApplyPaymentResult, FeeMonthSummary } from "@app-types/feeMonth.types";
 
 export interface DepositResult {
   payment: PaymentDocument;
-  student: StudentDocument;
+  ledger: ApplyPaymentResult;
+  feeSummary: FeeMonthSummary;
 }
 
+/**
+ * Admin-recorded fee collection (cash or admin-assisted online) — this is
+ * the Admin Module's "record a payment on behalf of a student" flow.
+ * The Monthly Fee Ledger (feeMonth.service.ts) is the source of truth for
+ * dues: every deposit/correction/deletion here goes through it (FIFO
+ * settlement, oldest unpaid month first) rather than touching a single
+ * denormalized due figure, so a student's due is never inconsistent with
+ * their actual month-by-month payment history.
+ */
 class PaymentService {
   /**
-   * Deposit a fee payment against a student.
-   * - Validates the student exists.
-   * - Enforces Business Rule 3: payment cannot exceed the outstanding due.
-   * - Generates a unique receipt number (RCP-YYYY-00001).
-   * - Recalculates and persists the student's dueFee.
+   * Records a fee payment an admin collected from a student — in cash, or
+   * online on the student's behalf. Settles the student's oldest unpaid
+   * month(s) first (Business Rule 3 — and the carry-forward mechanism —
+   * are both enforced inside feeMonthService.applyPayment).
    */
   async depositFee(input: DepositFeeInput): Promise<DepositResult> {
     const student = await studentRepository.findById(input.studentId);
@@ -26,13 +36,9 @@ class PaymentService {
       throw ApiError.notFound("Student not found");
     }
 
-    const currentDue = student.dueFee ?? 0;
-
-    if (input.amount > currentDue) {
-      throw ApiError.badRequest(
-        `Amount exceeds outstanding due. Outstanding due is ${currentDue}.`
-      );
-    }
+    // Throws if amount exceeds outstanding due — before we generate a
+    // receipt or create a payment record for it.
+    const ledger = await feeMonthService.applyPayment(input.studentId, input.amount);
 
     const year = new Date().getFullYear();
     const sequence = await counterRepository.getNextSequence(`receipt-${year}`);
@@ -42,25 +48,25 @@ class PaymentService {
       student: student._id,
       amount: input.amount,
       paymentMode: input.paymentMode,
+      status: PaymentStatus.SUCCESS,
+      channel: PaymentChannel.ADMIN,
       remarks: input.remarks,
       receiptNumber,
       paymentDate: new Date(),
     });
 
-    const updatedStudent = await studentRepository.updateById(input.studentId, {
-      dueFee: currentDue - input.amount,
-    });
+    const feeSummary = await feeMonthService.getFeeSummary(input.studentId);
 
-    return { payment, student: updatedStudent as StudentDocument };
+    return { payment, ledger, feeSummary };
   }
 
   /**
    * Correct a previously entered deposit amount (or other editable fields).
    * Business Rule 6: editing a payment must update all reports — here that
-   * means recalculating the student's dueFee from the full payment history
-   * rather than doing a simple delta adjustment, so due can never drift out
-   * of sync even if this endpoint is called more than once for the same
-   * correction.
+   * means unwinding the old amount's effect on the ledger and reapplying the
+   * new amount from scratch (both via feeMonth.service.ts), rather than
+   * patching a single stored due figure. This keeps due correct even if the
+   * same payment is corrected more than once.
    */
   async updateDeposit(paymentId: string, input: UpdateDepositInput): Promise<DepositResult> {
     const payment = await paymentRepository.findById(paymentId);
@@ -68,33 +74,21 @@ class PaymentService {
       throw ApiError.notFound("Payment not found");
     }
 
-    const student = await studentRepository.findById(payment.student.toString());
-    if (!student) {
-      throw ApiError.notFound("Student not found for this payment");
+    if (payment.status !== PaymentStatus.SUCCESS) {
+      throw ApiError.badRequest("Only successfully recorded payments can be corrected");
     }
 
+    const studentId = payment.student.toString();
     const newAmount = input.amount ?? payment.amount;
 
     if (newAmount <= 0) {
       throw ApiError.badRequest("Amount must be greater than 0");
     }
 
-    // Total paid by every OTHER payment for this student, excluding the one being edited.
-    const totalPaidExcludingThis = await paymentRepository.sumByStudent(
-      student._id.toString(),
-      paymentId
-    );
-
-    const totalFee = student.totalFee ?? 0;
-    const newDue = totalFee - (totalPaidExcludingThis + newAmount);
-
-    if (newDue < 0) {
-      throw ApiError.badRequest(
-        `Updated amount exceeds the student's total fee. Maximum allowed amount is ${
-          totalFee - totalPaidExcludingThis
-        }.`
-      );
-    }
+    // Undo this payment's old effect on the ledger, then reapply the new
+    // amount — applyPayment() re-validates against the (now-reopened) due.
+    await feeMonthService.reversePayment(studentId, payment.amount);
+    const ledger = await feeMonthService.applyPayment(studentId, newAmount);
 
     const updatedPayment = await paymentRepository.updateById(paymentId, {
       amount: newAmount,
@@ -102,18 +96,19 @@ class PaymentService {
       remarks: input.remarks ?? payment.remarks,
     });
 
-    const updatedStudent = await studentRepository.updateById(student._id.toString(), {
-      dueFee: newDue,
-    });
+    const feeSummary = await feeMonthService.getFeeSummary(studentId);
 
     return {
       payment: updatedPayment as PaymentDocument,
-      student: updatedStudent as StudentDocument,
+      ledger,
+      feeSummary,
     };
   }
 
   /**
-   * Business Rule 5: deleting a payment must recalculate all dues automatically.
+   * Business Rule 5: deleting a payment must recalculate all dues
+   * automatically — done here by reversing its effect on the ledger before
+   * removing the payment record.
    */
   async deleteDeposit(paymentId: string): Promise<DepositResult> {
     const payment = await paymentRepository.findById(paymentId);
@@ -121,22 +116,21 @@ class PaymentService {
       throw ApiError.notFound("Payment not found");
     }
 
-    const student = await studentRepository.findById(payment.student.toString());
-    if (!student) {
-      throw ApiError.notFound("Student not found for this payment");
+    const studentId = payment.student.toString();
+
+    if (payment.status === PaymentStatus.SUCCESS) {
+      await feeMonthService.reversePayment(studentId, payment.amount);
     }
 
     await paymentRepository.deleteById(paymentId);
 
-    const totalPaidRemaining = await paymentRepository.sumByStudent(student._id.toString());
-    const totalFee = student.totalFee ?? 0;
-    const newDue = Math.max(totalFee - totalPaidRemaining, 0);
+    const feeSummary = await feeMonthService.getFeeSummary(studentId);
 
-    const updatedStudent = await studentRepository.updateById(student._id.toString(), {
-      dueFee: newDue,
-    });
-
-    return { payment, student: updatedStudent as StudentDocument };
+    return {
+      payment,
+      ledger: { monthsUpdated: [], totalApplied: 0, remainingDue: feeSummary.totalDue },
+      feeSummary,
+    };
   }
 
   async getPaymentsByStudent(studentId: string): Promise<PaymentDocument[]> {

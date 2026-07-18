@@ -17,10 +17,11 @@ class StudentService {
 
     const rollTaken = await studentRepository.existsByRollNumberInClass(
       payload.rollNumber,
-      payload.class
+      payload.class,
+      payload.section
     );
     if (rollTaken) {
-      throw ApiError.conflict("Roll number already exists in this class"); // Business Rule 2
+      throw ApiError.conflict("Roll number already exists in this class and section"); // Business Rule 2
     }
 
     // totalFee/dueFee are populated by the schema's default functions on creation.
@@ -52,16 +53,18 @@ class StudentService {
       }
     }
 
-    if (payload.rollNumber || payload.class) {
+    if (payload.rollNumber || payload.class || payload.section) {
       const rollNumber = payload.rollNumber ?? existingStudent.rollNumber;
       const studentClass = payload.class ?? existingStudent.class;
+      const section = payload.section ?? existingStudent.section;
       const rollTaken = await studentRepository.existsByRollNumberInClass(
         rollNumber,
         studentClass,
+        section,
         id
       );
       if (rollTaken) {
-        throw ApiError.conflict("Roll number already exists in this class");
+        throw ApiError.conflict("Roll number already exists in this class and section");
       }
     }
 
