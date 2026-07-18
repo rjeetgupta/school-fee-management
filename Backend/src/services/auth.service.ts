@@ -1,4 +1,4 @@
-import bcrypt from "bcrypt";
+import bcrypt from "bcryptjs";
 import { adminRepository } from "@repositories/admin.repository";
 import { signToken } from "@utils/jwt";
 import { ApiError } from "@utils/ApiError";

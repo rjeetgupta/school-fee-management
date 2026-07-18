@@ -1,4 +1,4 @@
-import bcrypt from "bcrypt";
+import bcrypt from "bcryptjs";
 import { connectDatabase, disconnectDatabase } from "@config/database";
 import { AdminModel } from "@models/admin.model";
 import { env } from "@config/env";
