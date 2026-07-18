@@ -1,4 +1,5 @@
 import { z } from "zod";
+import { GENDERS } from "@/types/student";
 
 const mobileRegex = /^[6-9]\d{9}$/;
 
@@ -8,6 +9,10 @@ export const studentFormSchema = z.object({
   studentName: z.string().trim().min(2, "Student name is required"),
   fatherName: z.string().trim().min(2, "Father's name is required"),
   class: z.string().trim().min(1, "Class is required"),
+  section: z.string().trim().min(1, "Section is required"),
+  email: z.string().trim().email("Enter a valid email address"),
+  gender: z.enum(GENDERS, { error: "Select a gender" }),
+  dateOfBirth: z.string().min(1, "Date of birth is required"),
   mobileNumber: z
     .string()
     .trim()
@@ -18,6 +23,7 @@ export const studentFormSchema = z.object({
     .regex(mobileRegex, "Enter a valid 10-digit WhatsApp number")
     .optional()
     .or(z.literal("")),
+  address: z.string().trim().optional(),
   tuitionFee: z.coerce
     .number({ error: "Tuition fee must be a number" })
     .nonnegative("Tuition fee cannot be negative"),
@@ -34,8 +40,13 @@ export const studentFormDefaults: StudentFormValues = {
   studentName: "",
   fatherName: "",
   class: "",
+  section: "",
+  email: "",
+  gender: "Male",
+  dateOfBirth: "",
   mobileNumber: "",
   whatsappNumber: "",
+  address: "",
   tuitionFee: 0,
   hostelFee: 0,
   miscellaneousFee: 0,
