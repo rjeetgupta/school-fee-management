@@ -2,6 +2,9 @@ export const STUDENT_STATUS = {
   ACTIVE: "Active",
 } as const;
 
+export const GENDERS = ["Male", "Female", "Other"] as const;
+export type Gender = (typeof GENDERS)[number];
+
 export interface Student {
   _id: string;
   admissionNumber: string;
@@ -9,7 +12,11 @@ export interface Student {
   studentName: string;
   fatherName: string;
   class: string;
+  section: string;
+  email: string;
+  gender: Gender;
   mobileNumber: string;
+  dateOfBirth: string;
   whatsappNumber?: string;
   tuitionFee: number;
   hostelFee?: number;
@@ -33,6 +40,7 @@ export interface PaginatedResult<T> {
 export interface StudentListFilters {
   search?: string;
   class?: string;
+  section?: string;
   page?: number;
   limit?: number;
 }
