@@ -1,4 +1,5 @@
 import { z } from "zod";
+import { Gender } from "@app-types/student.types";
 
 const mobileRegex = /^[6-9]\d{9}$/; // adjust per target country format
 
@@ -9,11 +10,15 @@ export const createStudentSchema = z.object({
     studentName: z.string().trim().min(2, "Student name is required"),
     fatherName: z.string().trim().min(2, "Father name is required"),
     class: z.string().trim().min(1, "Class is required"),
+    section: z.string().trim().min(1, "Section is required"),
+    email: z.string().trim().email("Enter a valid email address"),
+    gender: z.nativeEnum(Gender, { invalid_type_error: "Select a valid gender" }),
     address: z.string().trim().optional(),
     mobileNumber: z
       .string()
       .trim()
       .regex(mobileRegex, "Enter a valid 10-digit mobile number"),
+    dateOfBirth: z.coerce.date({ invalid_type_error: "Enter a valid date of birth" }),
     whatsappNumber: z
       .string()
       .trim()
@@ -42,6 +47,7 @@ export const listStudentsQuerySchema = z.object({
   query: z.object({
     search: z.string().trim().optional(),
     class: z.string().trim().optional(),
+    section: z.string().trim().optional(),
     page: z.coerce.number().int().positive().optional(),
     limit: z.coerce.number().int().positive().max(100).optional(),
   }),
