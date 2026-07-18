@@ -8,12 +8,7 @@ import { DepositFeeBody, UpdateDepositBody } from "@validations/payment.validati
 export const depositFee = asyncHandler(async (req: Request, res: Response) => {
   const payload = req.body as DepositFeeBody;
   const result = await paymentService.depositFee(payload);
-  res.status(201).json(
-    new ApiResponse(
-      201,
-      result,
-      "Fee deposited successfully"
-    ));
+  res.status(201).json(new ApiResponse(201, result, "Fee deposited successfully"));
 });
 
 // PATCH /api/v1/payments/:id  — correct a previously entered deposit

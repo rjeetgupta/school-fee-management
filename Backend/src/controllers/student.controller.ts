@@ -29,6 +29,7 @@ export const listStudents = asyncHandler(async (req: Request, res: Response) => 
   const filters: StudentFilterQuery = {
     search: req.query.search as string | undefined,
     class: req.query.class as string | undefined,
+    section: req.query.section as string | undefined,
     page: req.query.page ? Number(req.query.page) : undefined,
     limit: req.query.limit ? Number(req.query.limit) : undefined,
   };
