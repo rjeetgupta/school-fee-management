@@ -7,6 +7,7 @@ import {
   deleteStudent,
 } from "@controllers/student.controller";
 import { validate } from "@middlewares/validate.middleware";
+import { verifyJWT, requireRole } from "@middlewares/auth.middleware";
 import {
   createStudentSchema,
   updateStudentSchema,
@@ -15,6 +16,8 @@ import {
 } from "@validations/student.validation";
 
 const router = Router();
+
+router.use(verifyJWT, requireRole("admin"));
 
 router
   .route("/")

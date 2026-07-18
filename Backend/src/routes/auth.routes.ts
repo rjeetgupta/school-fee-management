@@ -4,6 +4,7 @@ import { validate } from "@middlewares/validate.middleware";
 import { loginSchema } from "@validations/auth.validation";
 
 const router = Router();
-router.route("/login").post(validate(loginSchema), login)
+
+router.post("/login", validate(loginSchema), login);
 
 export default router;

@@ -6,6 +6,7 @@ import {
   getPaymentsByStudent,
 } from "@controllers/payment.controller";
 import { validate } from "@middlewares/validate.middleware";
+import { verifyJWT, requireRole } from "@middlewares/auth.middleware";
 import {
   depositFeeSchema,
   updateDepositSchema,
@@ -14,6 +15,8 @@ import {
 } from "@validations/payment.validation";
 
 const router = Router();
+
+router.use(verifyJWT, requireRole("admin"));
 
 router.post("/", validate(depositFeeSchema), depositFee);
 router.get("/student/:studentId", validate(studentIdParamSchema), getPaymentsByStudent);
