@@ -2,13 +2,23 @@ export enum StudentStatus {
   ACTIVE = "Active",
 }
 
+export enum Gender {
+  MALE = "Male",
+  FEMALE = "Female",
+  OTHER = "Other",
+}
+
 export interface IStudent {
   admissionNumber: string;
   rollNumber: string;
   studentName: string;
   fatherName: string;
   class: string;
+  section: string;
+  email: string;
+  gender: Gender;
   mobileNumber: string;
+  dateOfBirth: Date;
   whatsappNumber?: string;
   tuitionFee: number;
   hostelFee?: number;
@@ -24,6 +34,7 @@ export interface IStudent {
 export interface StudentFilterQuery {
   search?: string;
   class?: string;
+  section?: string;
   page?: number;
   limit?: number;
 }
