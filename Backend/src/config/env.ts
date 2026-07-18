@@ -10,6 +10,9 @@ interface EnvConfig {
   jwtExpiresIn: string;
   adminEmail: string;
   adminPassword: string;
+  razorpayKeyId: string;
+  razorpayKeySecret: string;
+  razorpayWebhookSecret: string;
 }
 
 function getEnvVar(key: string, fallback?: string): string {
@@ -28,4 +31,7 @@ export const env: EnvConfig = {
   jwtExpiresIn: getEnvVar("JWT_EXPIRES_IN", "1d"),
   adminEmail: getEnvVar("ADMIN_EMAIL"),
   adminPassword: getEnvVar("ADMIN_PASSWORD"),
+  razorpayKeyId: getEnvVar("RAZORPAY_KEY_ID"),
+  razorpayKeySecret: getEnvVar("RAZORPAY_KEY_SECRET"),
+  razorpayWebhookSecret: getEnvVar("RAZORPAY_WEBHOOK_SECRET"),
 };
